@@ -1,0 +1,49 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://120.79.195.71:8761/eureka/
+server:
+  port: 8763
+  tomcat:
+    basedir: ../logs/${spring.application.name}/tomcat
+    accesslog:
+      enabled: true
+      pattern: "%t %a %r %s (%D ms)"
+      directory: ../logs/${spring.application.name}/tomcat/acc
+
+
+
+
+
+
+#写库数据源
+datasource.common:
+  jdbc-url: jdbc:mysql://120.79.195.71:3306/test?allowMultiQueries=true&autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useSSL=false
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  username: cloudmysql1
+  password: XueFengMySql-1
+  max-active: 5
+  max-idle: 2
+  min-idle: 0
+  initial-size: 0
+  max-wait: 10000
+  testWhileIdle: true
+  validationQuery: select 1
+  validationQueryTimeout: 1
+  validationInterval: 120000
+
+#读库数据源
+datasource.readonly:
+  jdbc-url: jdbc:mysql://120.79.195.71:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&zeroDateTimeBehavior=convertToNull&useSSL=false&readonly=true
+  username: cloudmysql1
+  password: XueFengMySql-1
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  max-active: 5
+  max-idle: 2
+  min-idle: 0
+  initial-size: 0
+  max-wait: 10000
+  testWhileIdle: true
+  validationQuery: select 1
+  validationQueryTimeout: 1
+  validationInterval: 120000

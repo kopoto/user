@@ -1,0 +1,28 @@
+#spring.application.name是应用（服务）的唯一标识，全局唯一，请使用一致、清晰易懂的命名
+#allow-bean-definition-overriding spring feign
+spring:
+  application:
+    name: user-server
+  profiles:
+    active: test
+  main:
+    allow-bean-definition-overriding: true
+
+mvc.exception.resolver.restassert.logTrace: true
+
+
+#tomcat配置，off和production会自动通过命令行参数指定server.port端口和accesslog目录
+server:
+  tomcat:
+    max-threads: 1500
+    uri-encoding: UTF-8
+    accept-count: 1000
+    max-connections: 2500
+    #注意，如果有上传文件的应用，推荐指定下basedir,tomcat用来临时缓存文件的目录，可用运维的配置文件里读取
+    #basedir: {MATRIX.PRIVATE_DATA_DIR}
+    accesslog:
+      enabled: true
+      pattern: '%{yyyy-MM-dd HH:mm:ss.SSS}t [%{X-Trace-Id}o | %I] %a "%{X-Client-Name}i" %U %m  %s %D'
+    compression:
+      enabled: true
+      mime-types: application/json,application/javascript,application/xhtml+xml,text/html,text/xml,text/plain,text/css

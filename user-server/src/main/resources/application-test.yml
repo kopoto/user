@@ -60,3 +60,20 @@ spring:
     circuit:
       breaker:
         enabled: false
+  #kafka集群配置 本地配置 host 文件
+  kafka:
+    producer:
+      bootstrap-servers: 118.89.247.112:9092
+      acks: all
+      retries: 5
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      bootstrap-servers: 118.89.247.112:9092
+      enable-auto-commit: false
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 5
+      ackMode: manual_immediate
+user.queue.order:
+ topic: test
+ group: mok

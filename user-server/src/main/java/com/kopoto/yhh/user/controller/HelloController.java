@@ -1,6 +1,7 @@
 package com.kopoto.yhh.user.controller;
 
 import com.kopoto.yhh.pikachu.spi.TestSpi;
+import com.kopoto.yhh.user.Service.KafkaService;
 import com.kopoto.yhh.user.Service.StudentService;
 import com.kopoto.yhh.user.entity.Student;
 import com.kopoto.yhh.user.spi.HelloSpi;
@@ -14,17 +15,21 @@ public class HelloController implements HelloSpi {
     public int test() {
         return 0;
     }
+
     @Autowired
     private StudentService studentService;
     @Autowired
     private TestSpi testSpi;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private KafkaService kafkaService;
 
     @RequestMapping("/index")
     public String index() {
+        kafkaService.sendOrderStateChangeMsg();
         redisTemplate.opsForValue().set("a", "a");
-        int test = testSpi.test();
+//        int test = testSpi.test();
         Object a = redisTemplate.opsForValue().get("a");
         Student one = studentService.one(1);
         return "Greetings from Spring Boot!";

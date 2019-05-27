@@ -11,12 +11,17 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.springframework.beans.BeansException;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -28,7 +33,9 @@ import java.time.format.DateTimeFormatter;
 
 @EnableCaching
 @Configuration
-public class RedisConfig extends CachingConfigurerSupport {
+public class RedisConfig extends CachingConfigurerSupport implements ApplicationContextAware {
+
+    private ApplicationContext applicationContext;
 
     @Override
     public KeyGenerator keyGenerator() {
@@ -54,7 +61,8 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    public RedisTemplate redisTemplate(RedisConnectionFactory factory) {
+    public RedisTemplate redisTemplate() {
+        RedisConnectionFactory factory = lettuceConnectionFactoryV1();
         StringRedisTemplate template = new StringRedisTemplate(factory);
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
         ObjectMapper om = new ObjectMapper();
@@ -75,5 +83,25 @@ public class RedisConfig extends CachingConfigurerSupport {
         template.afterPropertiesSet();
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
         return template;
+    }
+
+
+    @Bean
+    @ConfigurationProperties(prefix = "redis.v1")
+    public CustomizeRedisProperty redisV1() {
+        return new CustomizeRedisProperty();
+    }
+
+
+    @Bean
+    public RedisConnectionFactory lettuceConnectionFactoryV1() {
+        CustomizeRedisProperty customizeRedisProperty = redisV1();
+        return new LettuceConnectionFactory(customizeRedisProperty.getHost(), customizeRedisProperty.getPort());
+    }
+
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
